@@ -227,7 +227,7 @@
       <div>
         <div class="eyebrow">A living system map / capability overview</div>
         <h1>Moonlash<br>runtime map.</h1>
-        <p class="dek">An event-driven AI runtime connected to a complete 3D environment. It controls a map, multiple characters, cameras, lights, animation, facial capture, hand tracking, clothing, props, particles, audio, games, media, scheduling, and recovery.</p>
+        <p class="dek">An event-driven AI runtime connected to a complete 3D environment and a persistent 24/7 Discord presence. It controls conversation, memory, voice, vision, characters, cameras, lights, animation, tracking, clothing, props, particles, games, media, scheduling, and recovery.</p>
       </div>
       <div class="stamp">RUNTIME<br>CAPABILITY<br>MATRIX</div>
     </header>
@@ -393,6 +393,19 @@
       <article class="tile violet third"><span class="tile-label">Local command transport</span><h3>Persistent socket command channel.</h3><p>External overlays and control surfaces can send and receive lightweight event messages for scene changes, timers, media, status, and operator actions.</p></article>
       <article class="tile blue third"><span class="tile-label">Control API</span><h3>HTTP control endpoints.</h3><p>Local tools and hardware integrations can invoke runtime actions through a small request-based control layer, including avatar, stream, queue, and media operations.</p></article>
       <article class="tile coral wide"><span class="tile-label">Live platform protocol</span><h3>In-house event and API client.</h3><p>The live-platform connection was implemented directly in the project. It handles authentication checks, persistent event sessions, subscription registration, reconnects, duplicate suppression, event normalization, chat, follows, raids, cheers, and channel-point events.</p></article>
+
+      <article class="tile dark wide anchor"><span class="tile-label">Discord</span><h3>Persistent 24/7 Discord presence.</h3><p>Moon remains available in Discord outside stream hours. Discord uses the same core persona, memory, model routing, response validation, vision, image generation, speech, secondary characters, and history systems as the live runtime.</p></article>
+      <article class="tile blue third"><span class="tile-label">Discord text</span><h3>Channels, direct messages, mentions, and replies.</h3><p>Moon routes selected channels, direct messages, explicit mentions, replies to earlier messages, stickers, and referenced-message context into the conversation system.</p></article>
+      <article class="tile yellow third"><span class="tile-label">Discord context</span><h3>Channel history and identity resolution.</h3><p>Recent channel messages, reply chains, channel names, mentions, aliases, and resolved user identities provide context before Moon responds.</p></article>
+      <article class="tile violet third"><span class="tile-label">Discord media</span><h3>Image, animated image, and video vision.</h3><p>Attachments and linked media are downloaded, converted, sampled into frames when needed, analyzed, added to context, and removed after processing.</p></article>
+      <article class="tile green third"><span class="tile-label">Discord links</span><h3>Embed and shared-media interpretation.</h3><p>Video embeds, thumbnails, titles, authors, refreshed attachment links, and supported media-sharing links are converted into useful conversational context.</p></article>
+      <article class="tile coral third"><span class="tile-label">Discord generation</span><h3>Image generation and publishing.</h3><p>Users can request several image formats and character styles. Requests use prompt checks, cooldowns, quotas, loading messages, visual analysis, context updates, and result publishing.</p></article>
+      <article class="tile blue third"><span class="tile-label">Discord memory</span><h3>Memory, history, and character commands.</h3><p>Discord commands can load user memories, add long-term notes, search history, list characters, inspect prompts, check quotas, and request specialized visual output.</p></article>
+      <article class="tile dark wide"><span class="tile-label">Discord voice</span><h3>Continuous voice-channel conversation.</h3><p>Moon can join a voice channel, receive compressed user audio, decode and measure it, reject noise, transcribe completed turns, identify speakers, add speech to context, generate a response, and play her voice back into the channel.</p></article>
+      <article class="tile lime third"><span class="tile-label">Discord voice input</span><h3>Speaker-aware recording and transcription.</h3><p>Speaking events open per-user recordings. Inactivity closes each turn, volume and duration checks reject bad clips, and transcript anomaly checks prevent false input.</p></article>
+      <article class="tile violet third"><span class="tile-label">Discord voice output</span><h3>Converted and retried audio playback.</h3><p>Generated speech is converted to the required voice format, retried after conversion failure, volume-controlled, played through the shared channel connection, and cleaned up.</p></article>
+      <article class="tile yellow third"><span class="tile-label">Discord characters</span><h3>Character-specific voice routing.</h3><p>Mentions and conversation state can route speech to Moon or a screen character. Each character keeps separate context, voice, animation, expression, and lip-sync behavior.</p></article>
+      <article class="tile coral third"><span class="tile-label">Discord operating modes</span><h3>Stream, watch-along, and offline behavior.</h3><p>Channel selection and response rules change when the stream is live, when Discord is the active broadcast environment, during watch-alongs, or while Moon is available offline.</p></article>
     </section>
 
     <section class="footer">
@@ -445,7 +458,7 @@
       <article class="tile dark">
         <span class="tile-label">Operations and recovery</span>
         <h3>Hotkeys, control APIs, sockets, analytics, and restart state.</h3>
-        <p>Operator controls, platform events, local endpoints, overlays, reconnects, provider failover, queue recovery, backups, telemetry, and watchdogs support continuous live operation.</p>
+        <p>Discord, operator controls, platform events, local endpoints, overlays, reconnects, provider failover, queue recovery, backups, telemetry, and watchdogs support continuous operation.</p>
       </article>
     </section>
   </main>
