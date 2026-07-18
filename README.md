@@ -2,7 +2,7 @@
 
 # Moonlash Runtime Capability Matrix
 
-An event-driven AI runtime connected to a persistent 3D environment. It coordinates conversation, memory, voice, vision, multiple characters, cameras, lighting, animation, tracking, physics, media, games, and live audience input.
+An event-driven AI runtime connected to a persistent 3D environment and a 24/7 Discord presence. It coordinates conversation, memory, voice, vision, multiple characters, cameras, lighting, animation, tracking, physics, media, games, and live audience input.
 
 `EVENTS` -> `CONTEXT` -> `SCHEDULING` -> `3D SCENE AND AUDIO` -> `PERSISTENCE`
 
@@ -296,6 +296,57 @@ An event-driven AI runtime connected to a persistent 3D environment. It coordina
 </tr>
 </table>
 
+## Discord, 24/7 Text, Media, and Voice
+
+<table>
+<tr>
+<td colspan="3"><strong>Persistent Discord presence</strong><br><sub>Moon remains available in Discord outside stream hours. Discord uses the same core persona, memory, model routing, response validation, vision, image generation, speech, secondary-character, and history systems as the live runtime.</sub></td>
+</tr>
+<tr>
+<td width="33%"><strong>Text channels</strong><br><sub>Selected channels are monitored and routed according to channel, stream state, direct addressing, and recent activity.</sub></td>
+<td width="33%"><strong>Direct messages</strong><br><sub>Private messages use a dedicated route while sharing the main identity, memory, and response systems.</sub></td>
+<td width="33%"><strong>Mentions and replies</strong><br><sub>Direct mentions, replies to Moon, referenced messages, stickers, and mention targets are resolved before context insertion.</sub></td>
+</tr>
+<tr>
+<td><strong>Channel history</strong><br><sub>Recent messages, channel names, reply chains, and focused history are inserted when a response needs local conversation context.</sub></td>
+<td><strong>User identity</strong><br><sub>Aliases and platform identities are resolved so Discord activity maps to the same users and memories used elsewhere.</sub></td>
+<td><strong>Reactions and activity</strong><br><sub>Message reactions and community activity can enter context, with older low-value reaction state removed during cleanup.</sub></td>
+</tr>
+<tr>
+<td><strong>Image vision</strong><br><sub>Image attachments are downloaded, converted when needed, analyzed, and inserted into conversational context.</sub></td>
+<td><strong>Animated-image vision</strong><br><sub>Animated media is sampled across multiple frames so movement and the visible result are described.</sub></td>
+<td><strong>Video vision</strong><br><sub>Video attachments and supported shared-media links are downloaded, sampled into frames, analyzed, and deleted.</sub></td>
+</tr>
+<tr>
+<td><strong>Embed interpretation</strong><br><sub>Video titles, authors, thumbnails, and visual descriptions are extracted from embeds and added to context.</sub></td>
+<td><strong>Attachment recovery</strong><br><sub>Expired attachment links can be refreshed before a second download attempt.</sub></td>
+<td><strong>Media cleanup</strong><br><sub>Downloaded images, animations, videos, converted files, and generated audio are removed after processing.</sub></td>
+</tr>
+<tr>
+<td><strong>Image generation</strong><br><sub>Discord users can request multiple image formats and character styles through the same generation and visual-analysis pipeline.</sub></td>
+<td><strong>Generation controls</strong><br><sub>Prompt checks, length limits, safety handling, cooldowns, per-user quotas, loading messages, and failure output are enforced.</sub></td>
+<td><strong>Result publishing</strong><br><sub>Generated images, prompts, descriptions, and fallback media can be posted back to Discord and added to Moon's context.</sub></td>
+</tr>
+<tr>
+<td><strong>Memory commands</strong><br><sub>Users can load person-specific memory, add long-term notes, and search historical conversation.</sub></td>
+<td><strong>Character commands</strong><br><sub>Users can list known characters, inspect character prompts, and request character-specific visual formats.</sub></td>
+<td><strong>Utility commands</strong><br><sub>Help, songs, time, quota status, drawing modes, comics, and specialized visual requests are available.</sub></td>
+</tr>
+<tr>
+<td colspan="3"><strong>Discord voice conversation</strong><br><sub>Moon can join a voice channel, receive user audio, decode it, detect speaker turns, reject noise, transcribe speech, add it to context, generate a response, and play her voice back into the same channel.</sub></td>
+</tr>
+<tr>
+<td><strong>Speaker-aware capture</strong><br><sub>Per-user speaking events open individual recording streams and preserve speaker identity through transcription.</sub></td>
+<td><strong>Turn completion</strong><br><sub>Inactivity closes each utterance. Volume, duration, corruption, and transcript-anomaly checks reject invalid clips.</sub></td>
+<td><strong>Voice response scheduling</strong><br><sub>Mentions, speaker identity, queue state, active speech, and character routing determine whether and when Moon responds.</sub></td>
+</tr>
+<tr>
+<td><strong>Voice playback</strong><br><sub>Generated audio is converted to the required channel format, retried after conversion failure, volume-controlled, and cleaned up.</sub></td>
+<td><strong>Screen-character routing</strong><br><sub>Mentions can direct a turn to a secondary character with independent context, voice, expression, animation, and lip sync.</sub></td>
+<td><strong>Operating modes</strong><br><sub>Channel and response rules adjust for live streaming, Discord-based broadcasting, watch-alongs, and offline operation.</sub></td>
+</tr>
+</table>
+
 ## Reliability and Observability
 
 <table>
@@ -326,7 +377,7 @@ An event-driven AI runtime connected to a persistent 3D environment. It coordina
 </tr>
 <tr>
 <td><strong>Media production</strong><br><sub>Speech, music, images, animated media, full-song performances, reports, reviews, overlays, subtitles, timers, leaderboards, and published results are prepared and synchronized.</sub></td>
-<td><strong>Operator and platform control</strong><br><sub>Hotkeys, hardware controls, local sockets, HTTP endpoints, platform events, advertising timers, overlays, and direct scene commands provide live operational control.</sub></td>
+<td><strong>Discord, operator, and platform control</strong><br><sub>Persistent Discord operation, hotkeys, hardware controls, local sockets, HTTP endpoints, platform events, advertising timers, overlays, and direct scene commands provide operational control.</sub></td>
 <td><strong>Reliability and persistence</strong><br><sub>Provider failover, reconnects, recorder recovery, queue backups, context backups, pending work, watchdogs, telemetry, asset reports, and temporary-state cleanup support long-running operation.</sub></td>
 </tr>
 </table>
