@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Moonlash / System Map</title>
+  <style>
+    :root {
+      --ink: #edf4ff;
+      --muted: #aebbd1;
+      --paper: #171d2c;
+      --cream: #222a3d;
+      --surface-2: #293249;
+      --edge: #53617e;
+      --line: rgba(190, 211, 255, .18);
+      --cyan: #61e7ff;
+      --lime: #b8ee5a;
+      --coral: #ff806f;
+      --violet: #a99cff;
+      --blue: #79d6f2;
+      --yellow: #f1d36e;
+      --green: #83d9a5;
+      --shadow: 0 9px 22px rgba(5, 9, 20, .28), 0 0 14px rgba(97, 231, 255, .08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 5%, rgba(97, 231, 255, .11), transparent 27%),
+        radial-gradient(circle at 88% 17%, rgba(169, 156, 255, .11), transparent 30%),
+        linear-gradient(rgba(137, 170, 220, .055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(137, 170, 220, .055) 1px, transparent 1px),
+        var(--paper);
+      background-size: 28px 28px;
+      background-attachment: fixed;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .wrap { max-width: 1500px; margin: 0 auto; padding: 34px 28px 70px; }
+
+    .masthead {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 28px;
+      align-items: end;
+      padding-bottom: 26px;
+      border-bottom: 1px solid var(--edge);
+    }
+
+    .eyebrow, .kicker, .tile-label, .legend, .stat-label {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow { color: var(--cyan); margin-bottom: 12px; text-shadow: 0 0 12px rgba(97, 231, 255, .28); }
+
+    h1, h2, h3, p { margin-top: 0; }
+    h1 {
+      max-width: 850px;
+      margin-bottom: 12px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: clamp(44px, 8vw, 104px);
+      line-height: .86;
+      letter-spacing: -.065em;
+      font-weight: 900;
+      text-shadow: 0 0 24px rgba(97, 231, 255, .14);
+    }
+
+    .dek { max-width: 760px; margin-bottom: 0; color: #c0cbde; font-size: 16px; line-height: 1.5; }
+
+    .stamp {
+      width: 170px;
+      height: 170px;
+      display: grid;
+      place-items: center;
+      color: #182119;
+      border: 1px solid #d8ff82;
+      border-radius: 50%;
+      transform: rotate(7deg);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 23px;
+      line-height: .9;
+      text-align: center;
+      background: var(--lime);
+      box-shadow: 0 0 24px rgba(184, 238, 90, .22), var(--shadow);
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      margin: 26px 0 32px;
+      border: 1px solid var(--edge);
+      border-radius: 7px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .flow-step {
+      min-height: 92px;
+      padding: 15px 16px;
+      position: relative;
+      border-right: 1px solid var(--edge);
+      background: var(--cream);
+    }
+    .flow-step:last-child { border-right: 0; }
+    .flow-step:not(:last-child)::after {
+      content: '>'; position: absolute; right: -12px; top: 35px; z-index: 2;
+      width: 20px; height: 20px; display: grid; place-items: center;
+      color: #222638; border: 1px solid #f9e89e; border-radius: 50%; background: var(--yellow); font-weight: 900;
+      box-shadow: 0 0 12px rgba(241, 211, 110, .35);
+    }
+    .flow-step strong { display: block; margin: 9px 0 4px; font-size: 15px; }
+    .flow-step span { color: var(--muted); font-size: 12px; line-height: 1.25; }
+
+    .section-head {
+      display: flex; justify-content: space-between; align-items: baseline;
+      gap: 16px; margin: 30px 0 13px;
+    }
+    .section-head h2 { margin: 0; font-family: Arial, Helvetica, sans-serif; font-size: 27px; letter-spacing: -.03em; }
+    .section-head p { margin: 0; color: var(--muted); font-size: 12px; }
+
+    .matrix {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      grid-auto-rows: minmax(122px, auto);
+      gap: 11px;
+    }
+
+    .tile {
+      min-width: 0;
+      padding: 17px;
+      border: 1px solid var(--edge);
+      border-radius: 5px;
+      background: var(--cream);
+      box-shadow: var(--shadow);
+      transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+    }
+    .tile:hover { transform: translateY(-2px); border-color: var(--cyan); box-shadow: 0 12px 26px rgba(5, 9, 20, .35), 0 0 18px rgba(97, 231, 255, .14); }
+    .tile h3 { margin: 9px 0 8px; font-family: Arial, Helvetica, sans-serif; font-size: 23px; line-height: .98; letter-spacing: -.03em; }
+    .tile p { margin-bottom: 0; color: #c1cce0; font-size: 13px; line-height: 1.42; }
+    .tile-label { color: var(--cyan); }
+    .tile ul { margin: 9px 0 0; padding-left: 17px; color: #c1cce0; font-size: 12px; line-height: 1.45; }
+    .tile li::marker { color: var(--cyan); }
+
+    .dark { color: var(--ink); background: #131a2a; border-color: #647596; }
+    .dark p, .dark ul { color: #c7d2e5; }
+    .dark .tile-label { color: var(--lime); }
+    .lime { background: var(--lime); }
+    .coral { background: var(--coral); }
+    .violet { background: var(--violet); }
+    .blue { background: var(--blue); }
+    .yellow { background: var(--yellow); }
+    .green { background: var(--green); }
+    .lime, .coral, .violet, .blue, .yellow, .green { color: #182033; border-color: rgba(237, 244, 255, .52); }
+    .lime p, .coral p, .violet p, .blue p, .yellow p, .green p,
+    .lime ul, .coral ul, .violet ul, .blue ul, .yellow ul, .green ul { color: #283247; }
+    .lime .tile-label, .coral .tile-label, .violet .tile-label, .blue .tile-label, .yellow .tile-label, .green .tile-label { color: #38425a; }
+    .lime:hover { box-shadow: 0 12px 26px rgba(5, 9, 20, .35), 0 0 22px rgba(184, 238, 90, .24); }
+    .coral:hover { box-shadow: 0 12px 26px rgba(5, 9, 20, .35), 0 0 22px rgba(255, 128, 111, .24); }
+    .violet:hover { box-shadow: 0 12px 26px rgba(5, 9, 20, .35), 0 0 22px rgba(169, 156, 255, .25); }
+    .blue:hover { box-shadow: 0 12px 26px rgba(5, 9, 20, .35), 0 0 22px rgba(121, 214, 242, .24); }
+
+    .wide { grid-column: span 6; }
+    .third { grid-column: span 4; }
+    .half { grid-column: span 3; }
+    .double { grid-row: span 2; }
+    .anchor h3 { font-size: clamp(27px, 3vw, 42px); max-width: 440px; }
+    .number { float: right; font-family: Arial, Helvetica, sans-serif; font-size: 50px; line-height: .75; opacity: .55; }
+
+    .micro-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 13px;
+    }
+    .micro-grid div { padding: 9px; border: 1px solid var(--line); background: rgba(255,255,255,.025); font-size: 11px; font-weight: 700; }
+
+    .benchmark {
+      display: grid; grid-template-columns: 1.25fr 1fr 1fr 1fr; gap: 10px; align-items: end; margin-top: 16px;
+    }
+    .bar { height: 72px; border: 1px solid var(--edge); background: var(--surface-2); display: flex; flex-direction: column; justify-content: end; }
+    .bar i { display: block; background: var(--cyan); height: 25%; box-shadow: 0 0 12px rgba(97, 231, 255, .22); }
+    .bar:nth-child(2) i { height: 47%; background: var(--coral); }
+    .bar:nth-child(3) i { height: 70%; background: var(--violet); }
+    .bar:nth-child(4) i { height: 91%; background: var(--lime); }
+    .bar span { padding: 5px 7px; font-size: 10px; font-weight: 800; }
+
+    .footer {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 11px; margin-top: 11px;
+    }
+    .footer .tile { min-height: 150px; }
+    .legend-row { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 17px; }
+    .legend { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); letter-spacing: .08em; }
+    .dot { width: 12px; height: 12px; display: inline-block; border: 1px solid rgba(237, 244, 255, .72); box-shadow: 0 0 8px rgba(97, 231, 255, .18); }
+
+    @media (max-width: 900px) {
+      .wrap { padding: 24px 16px 50px; }
+      .masthead { grid-template-columns: 1fr; }
+      .stamp { width: 115px; height: 115px; font-size: 16px; }
+      .flow { grid-template-columns: 1fr; }
+      .flow-step { min-height: 0; border-right: 0; border-bottom: 1px solid var(--edge); }
+      .flow-step:last-child { border-bottom: 0; }
+      .flow-step:not(:last-child)::after { content: 'v'; right: 14px; top: auto; bottom: -12px; }
+      .matrix { grid-template-columns: repeat(6, 1fr); }
+      .wide { grid-column: span 6; }
+      .third { grid-column: span 3; }
+      .half { grid-column: span 3; }
+    }
+
+    @media (max-width: 570px) {
+      h1 { font-size: 58px; }
+      .matrix { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .wide, .third, .half { grid-column: span 2; }
+      .double { grid-row: span 1; }
+      .tile h3 { font-size: 21px; }
+      .anchor h3 { font-size: 31px; }
+      .benchmark { grid-template-columns: repeat(4, 1fr); }
+      .footer { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header class="masthead">
+      <div>
+        <div class="eyebrow">A living system map / capability overview</div>
+        <h1>Moonlash<br>runtime map.</h1>
+        <p class="dek">An event-driven AI runtime connected to a complete 3D environment. It controls a map, multiple characters, cameras, lights, animation, facial capture, hand tracking, clothing, props, particles, audio, games, media, scheduling, and recovery.</p>
+      </div>
+      <div class="stamp">RUNTIME<br>CAPABILITY<br>MATRIX</div>
+    </header>
+
+    <section class="flow" aria-label="A live event moving through the system">
+      <div class="flow-step"><div class="kicker">01 / intake</div><strong>Event normalization</strong><span>Chat, voice, sound, timer, image, or audience action.</span></div>
+      <div class="flow-step"><div class="kicker">02 / context</div><strong>Context enrichment</strong><span>Recent conversation, memories, persona, activity, and scene state.</span></div>
+      <div class="flow-step"><div class="kicker">03 / scheduling</div><strong>Priority selection</strong><span>Preparation, interruption rules, readiness, and queue order.</span></div>
+      <div class="flow-step"><div class="kicker">04 / output</div><strong>3D scene execution</strong><span>Speech, character transforms, face, hands, camera, lights, animation, props, and media.</span></div>
+      <div class="flow-step"><div class="kicker">05 / persistence</div><strong>State recording</strong><span>History, datasets, analytics, cleanup, and recovery.</span></div>
+    </section>
+
+    <div class="section-head"><h2>Functional subsystems</h2><p>Each tile describes one runtime responsibility.</p></div>
+    <section class="matrix">
+      <article class="tile dark wide anchor double">
+        <span class="tile-label">Context subsystem / active state</span>
+        <span class="number">01</span>
+        <h3>Persistent conversational context.</h3>
+        <p>Working memory is continuously assembled, trimmed, summarized, searched, backed up, and repaired. The character is not re-created from scratch on every message.</p>
+        <div class="micro-grid"><div>recent turns</div><div>long memory</div><div>current scene</div><div>behavior rules</div></div>
+      </article>
+
+      <article class="tile lime third"><span class="tile-label">Decision layer</span><h3>Priority queue scheduling.</h3><p>Routine conversation, audience events, ambient behavior, and staged productions share ordered execution.</p></article>
+      <article class="tile coral third"><span class="tile-label">Live timing</span><h3>Background preparation.</h3><p>Expensive work begins early, while presentation waits for the correct queue position and readiness state.</p></article>
+      <article class="tile violet third"><span class="tile-label">Scene control</span><h3>Response command parsing.</h3><p>One response can contain speech plus face, pose, movement, camera, effects, and voice mood.</p></article>
+
+      <article class="tile blue half"><span class="tile-label">Memory</span><h3>Selective memory retrieval.</h3><p>Searchable personal notes and dated history can be pulled into the present when relevant.</p></article>
+      <article class="tile yellow half"><span class="tile-label">Memory</span><h3>Context compaction.</h3><p>Old internal noise, reactions, duplicates, and stale instructions are summarized or removed.</p></article>
+      <article class="tile green half"><span class="tile-label">Protection</span><h3>Context and queue backups.</h3><p>Working context and pending work can survive ordinary crashes, reconnects, and long-running sessions.</p></article>
+      <article class="tile half"><span class="tile-label">Continuity</span><h3>History and dataset logging.</h3><p>Readable logs and structured records support recall, analysis, experiments, and future tuning.</p></article>
+
+      <article class="tile coral wide anchor"><span class="tile-label">Live inputs / event normalization</span><h3>Multichannel event ingestion.</h3><p>Messages, voice, environmental sounds, visual posts, community activity, and timers are normalized before scheduling.</p></article>
+      <article class="tile half"><span class="tile-label">Voice in</span><h3>Speech recognition and turn detection.</h3><p>Pre-roll, onset, silence, endpointing, interim text, final text, noise rejection, and reconnects protect live conversation.</p></article>
+      <article class="tile half"><span class="tile-label">Vision in</span><h3>Media download and visual analysis.</h3><p>Images, animation, video, and shared media can be interpreted, summarized, and placed into context.</p></article>
+
+      <article class="tile blue third"><span class="tile-label">Microphone input</span><h3>Live microphone acquisition.</h3><p>Audio devices are selected, sampled continuously, buffered before speech onset, and released cleanly during shutdown or recovery.</p></article>
+      <article class="tile yellow third"><span class="tile-label">Speech boundaries</span><h3>Voice-activity detection.</h3><p>Multiple detection paths identify speech onset, preserve pre-speech audio, measure trailing silence, and decide when an utterance is complete.</p></article>
+      <article class="tile green third"><span class="tile-label">Speech-to-text</span><h3>Streaming partial and final transcripts.</h3><p>Realtime recognition produces interim text for responsiveness and committed text for context, with turn resumes, finalization, and connection recovery.</p></article>
+      <article class="tile violet third"><span class="tile-label">Audio sources</span><h3>Microphone and game-audio paths.</h3><p>Human speech and game audio use separate capture behavior, buffering, silence thresholds, temporary files, and transcription timing.</p></article>
+      <article class="tile coral third"><span class="tile-label">Audio quality</span><h3>Noise and transcript rejection.</h3><p>Quiet clips, short clips, corrupted input, implausibly long transcripts, and repeated audio events are filtered before they reach the model.</p></article>
+      <article class="tile half"><span class="tile-label">Recognition recovery</span><h3>Recorder and connection recovery.</h3><p>Repeated recorder failures trigger recovery attempts. Lost recognition connections reconnect without requiring a full runtime restart.</p></article>
+      <article class="tile half"><span class="tile-label">Audio classification</span><h3>Non-speech event detection.</h3><p>Environmental and game sounds can be classified, deduplicated by recency, and inserted into the main and secondary character contexts.</p></article>
+
+      <article class="tile dark wide"><span class="tile-label">Visual input / media analysis</span><h3>Frame-based analysis for animated media.</h3><p>Animated images and videos are downloaded, sampled into representative frames, analyzed as a sequence, and summarized for conversation.</p></article>
+      <article class="tile lime third"><span class="tile-label">Fast vision</span><h3>Low-latency visual routing.</h3><p>When a live response matters more than maximum detail, a faster visual path can describe an image and return control to the response queue quickly.</p></article>
+      <article class="tile blue third"><span class="tile-label">GIF vision</span><h3>Animated-image interpretation.</h3><p>Multiple frames are selected from an animated image so motion, changes, and the visible punchline are represented in the description.</p></article>
+      <article class="tile violet third"><span class="tile-label">Video vision</span><h3>Short-video frame sampling.</h3><p>Video content is converted into a manageable frame set, analyzed for the relevant action, and removed after processing.</p></article>
+      <article class="tile coral third"><span class="tile-label">Game vision</span><h3>Game-specific visual context.</h3><p>Game screens and captured gameplay can be interpreted with prompts that focus on the current game, visible state, action, danger, or objective.</p></article>
+      <article class="tile yellow third"><span class="tile-label">Vision output</span><h3>Visual descriptions become speech.</h3><p>Visual analysis can be placed into context, used to generate a reaction, and routed through speech so Moon can respond aloud.</p></article>
+
+      <article class="tile violet third"><span class="tile-label">Voice out</span><h3>Speech-provider failover.</h3><p>Speech services are prioritized, swapped on failure, streamed when possible, and cleaned up after playback.</p></article>
+      <article class="tile blue third"><span class="tile-label">Audio routing</span><h3>Independent output routing.</h3><p>Voice, music, chat, microphone, local output, and community output can be routed independently.</p></article>
+      <article class="tile yellow third"><span class="tile-label">Interruption</span><h3>Speech playback state.</h3><p>Pause, skip, cancel, overlap prevention, speech tokens, and long-playback guards control output.</p></article>
+
+      <article class="tile dark wide anchor"><span class="tile-label">3D environment</span><h3>Complete multi-character scene control.</h3><p>The visual system is a persistent 3D environment with a map, multiple characters, several light sources, cameras, props, clothing, particles, collision, and independently controlled scene objects. The runtime changes this environment continuously during conversation and audience interactions.</p></article>
+      <article class="tile lime third"><span class="tile-label">Character entities</span><h3>Independent position and rotation control.</h3><p>Each 3D character can be positioned, rotated, shown, hidden, moved through the map, framed by cameras, and restored to a known scene position.</p></article>
+      <article class="tile coral third"><span class="tile-label">Character animation</span><h3>Independent animation state per character.</h3><p>Moon, the streamer, secondary characters, mascots, and guests can receive separate animation commands, timing, speed, reset, and idle behavior.</p></article>
+      <article class="tile violet third"><span class="tile-label">Scene graph control</span><h3>Map objects and scene state.</h3><p>The runtime controls characters, cameras, lights, images, overlays, props, effects, and other scene objects as parts of one coordinated 3D graph.</p></article>
+      <article class="tile dark wide"><span class="tile-label">3D command execution</span><h3>Scene commands from AI and runtime events.</h3><p>Performance controls resolve to expressions, movement, character transforms, props, cameras, image stages, lighting, particles, and timed transitions. Temporary effects expire without erasing newer state.</p></article>
+      <article class="tile lime third"><span class="tile-label">Visual state</span><h3>Animation and expression resolution.</h3><p>Aliases, exact matches, nearest matches, and fallback selection turn imperfect model output into usable stage control.</p></article>
+      <article class="tile half"><span class="tile-label">Camera</span><h3>Programmatic 3D camera control.</h3><p>Cameras support direct transforms, presets, smooth movement, relative framing, random selection, target orbits, shake, saved states, and restoration.</p></article>
+      <article class="tile half"><span class="tile-label">Locks</span><h3>Uninterruptible presentation state.</h3><p>Long performances and games protect their timing while ordinary work waits behind them.</p></article>
+
+      <article class="tile blue wide"><span class="tile-label">Facial capture</span><h3>52-channel expressive face tracking.</h3><p>The streamer character uses a high-detail facial capture set that tracks brows, eyes, cheeks, jaw, lips, mouth shapes, tongue, and asymmetric expressions. Moon and other characters use their own face-control paths.</p></article>
+      <article class="tile yellow third"><span class="tile-label">Hand capture</span><h3>Expressive finger and hand tracking.</h3><p>Tracked hands include wrist orientation, finger articulation, gesture changes, and live movement. Hand data can also drive attached particle trails.</p></article>
+      <article class="tile green third"><span class="tile-label">Body capture</span><h3>Live body motion input.</h3><p>Characters can receive tracked body movement or scripted animation. The runtime can switch between capture, animation, and fixed scene control as needed.</p></article>
+      <article class="tile coral third"><span class="tile-label">Environment map</span><h3>Persistent navigable 3D set.</h3><p>The characters occupy a shared map rather than isolated portrait frames. Scene actions can reposition them, move cameras around them, and use locations as part of a sequence.</p></article>
+      <article class="tile violet third"><span class="tile-label">Lighting system</span><h3>Multiple controllable light sources.</h3><p>The environment contains several lights with scene-specific and audio-reactive behavior. Performance commands can alter the lighting state alongside cameras, animation, and effects.</p></article>
+      <article class="tile blue third"><span class="tile-label">Wardrobe system</span><h3>Clothing and mesh state control.</h3><p>Character outfits and forms are assembled from controllable clothing and mesh states. Changes persist in character state and can affect later behavior and presentation.</p></article>
+      <article class="tile yellow third"><span class="tile-label">Prop system</span><h3>Character-attached and scene props.</h3><p>Weapons, instruments, food, drinks, phones, generated images, and other objects can be attached, displayed, animated, hidden, and reset on a timed sequence.</p></article>
+      <article class="tile green third"><span class="tile-label">Particle system</span><h3>Tracked and scripted particle effects.</h3><p>Particles can follow hands, mark attacks, enhance transformations, respond to performances, or run as timed environmental effects.</p></article>
+      <article class="tile coral third"><span class="tile-label">Character physics</span><h3>Collision volumes and ragdoll response.</h3><p>3D characters use collision boxes and physical response. Character-to-character actions can produce contact, displacement, and ragdoll behavior.</p></article>
+
+      <article class="tile blue third"><span class="tile-label">Connection</span><h3>3D engine connection recovery.</h3><p>Socket initialization, reconnect attempts, listener cleanup, queue clearing, timer cancellation, and stale transform removal handle a lost scene process.</p></article>
+      <article class="tile yellow third"><span class="tile-label">Transport safety</span><h3>Payload and buffer limits.</h3><p>Actions and data are size-checked. Excessive socket buffering is detected before it can accumulate unbounded stale scene updates.</p></article>
+      <article class="tile green third"><span class="tile-label">Scene inspection</span><h3>Transform and animation reads.</h3><p>Camera position, camera rotation, character transforms, and current animation state can be requested and recovered from runtime logs.</p></article>
+      <article class="tile violet third"><span class="tile-label">Expression timing</span><h3>Serialized expression queue.</h3><p>Expressions are queued, deactivated before replacement, held for a controlled duration, and cleared when a neutral face is required.</p></article>
+      <article class="tile coral third"><span class="tile-label">Animation timing</span><h3>Serialized animation queue.</h3><p>Animations run in order, receive duration and metadata handling, trigger an idle reset, and can select a random group member.</p></article>
+      <article class="tile half"><span class="tile-label">Character routing</span><h3>Secondary-character animation.</h3><p>Separate animation commands and timed resets can target another character without changing Moon's active animation.</p></article>
+      <article class="tile half"><span class="tile-label">Asset telemetry</span><h3>Missing asset tracking.</h3><p>Unknown expressions and animations are recorded, counted, and used to identify gaps between model output and available assets.</p></article>
+      <article class="tile dark wide"><span class="tile-label">Props and scene effects</span><h3>Timed prop state changes.</h3><p>Instrument, weapon, confetti, drink, snack, caller image, sleep state, speed changes, and scene-specific effects are activated and reset around animation timing.</p></article>
+      <article class="tile lime third"><span class="tile-label">Caller imagery</span><h3>Generated caller presentation.</h3><p>A caller image can be selected or generated, copied into the avatar scene, displayed, hidden, and paired with an effect.</p></article>
+      <article class="tile yellow third"><span class="tile-label">Avatar state</span><h3>Sleep and speed controls.</h3><p>The runtime can set sleep state and animation speed independently of the current speech or interaction.</p></article>
+      <article class="tile blue third"><span class="tile-label">Consumable props</span><h3>Timed drink and snack states.</h3><p>Consumption animations coordinate prop visibility, facial expression, short animation duration, and prop removal.</p></article>
+
+      <article class="tile dark wide anchor"><span class="tile-label">3D scene control graph</span><h3>Scene-side animation and effects runtime.</h3><p>A substantial part of the performance system runs inside the 3D scene. It receives commands, controls character tracking, executes camera programs, manages collision and effects, drives presentation sequences, and returns state to the main runtime.</p></article>
+      <article class="tile lime third"><span class="tile-label">Motion capture</span><h3>Per-character face and body tracking.</h3><p>Moon, the streamer, secondary characters, and the chat mascot can use separate face, body, and hand-tracking paths. Tracking can be enabled or disabled independently.</p></article>
+      <article class="tile violet third"><span class="tile-label">Lip synchronization</span><h3>Independent character audio feeds.</h3><p>Separate audio lines drive lip sync for Moon, the streamer, the on-screen secondary character, and the chat mascot. Simultaneous characters do not share one mouth-control signal.</p></article>
+      <article class="tile coral third"><span class="tile-label">Mascot animation</span><h3>Mascot body and speech control.</h3><p>The chat mascot has its own animation, body-control, face-reset, lip-sync, entrance, effect, and socket-command paths.</p></article>
+      <article class="tile blue third"><span class="tile-label">Physical simulation</span><h3>Character collision and ragdolls.</h3><p>Characters have collision volumes and ragdoll behavior. Mascot movement can physically collide with the streamer or other scene characters.</p></article>
+      <article class="tile yellow third"><span class="tile-label">First-time chatters</span><h3>Mascot welcome entrance.</h3><p>When a new chatter appears, the mascot can enter, wave, display the chatter's name, and deliver a welcome message.</p></article>
+      <article class="tile green third"><span class="tile-label">Mascot interactions</span><h3>Physical hug presentation.</h3><p>An audience interaction can send the mascot toward Moon or the streamer, play the approach and hug animation, resolve contact, and restore the mascot afterward.</p></article>
+
+      <article class="tile violet wide"><span class="tile-label">Camera control graphs</span><h3>Preset, relative, random, orbit, and saved cameras.</h3><p>Scene-side camera programs provide quick positions, relative framing, randomized views, target orbits, cinematic paths, serialized camera saves, and restoration. They are reused by performances, interactions, collabs, and special attacks.</p></article>
+      <article class="tile blue third"><span class="tile-label">Advanced camera motion</span><h3>Dynamic scene orbit effects.</h3><p>Camera controllers can orbit characters or scene objects, vary framing during an action, and produce motion beyond fixed camera presets.</p></article>
+      <article class="tile yellow third"><span class="tile-label">Collaboration layout</span><h3>Automatic 2D guest positioning.</h3><p>During a collaboration, a 2D guest can be added to the scene, positioned automatically, and framed with the 3D cast.</p></article>
+
+      <article class="tile green wide"><span class="tile-label">Generated-character reveal</span><h3>3D gacha reveal animation.</h3><p>The scene runs the visual pull sequence for generated characters, including reveal timing, image staging, camera changes, effects, reaction space, and cleanup.</p></article>
+      <article class="tile coral third"><span class="tile-label">Cinematic attack</span><h3>Multi-camera special attack sequence.</h3><p>An anger-triggered finishing move coordinates music, several camera angles, poses, attack animations, props, effects, timing, and scene restoration as one cinematic.</p></article>
+      <article class="tile violet third"><span class="tile-label">Horror presentation</span><h3>Scary poses and sanity effects.</h3><p>Audience interactions can trigger threatening walks, orbiting cameras, weapon presentation, unsettling visual effects, and timed horror sequences.</p></article>
+      <article class="tile blue third"><span class="tile-label">Reactive lighting</span><h3>Audio-driven scene lights.</h3><p>Scene lighting can react to selected audio sources, allowing music, voices, and performance audio to drive intensity or visual response.</p></article>
+      <article class="tile yellow third"><span class="tile-label">Hand effects</span><h3>Tracked particle trails.</h3><p>Hand tracking can emit particle trails that follow live hand movement during gestures, dances, attacks, and performance sequences.</p></article>
+      <article class="tile green third"><span class="tile-label">Rendering optimization</span><h3>Low-cost character shadows.</h3><p>A custom shadow representation reduces rendering cost while preserving a readable character shadow in the scene.</p></article>
+      <article class="tile coral third"><span class="tile-label">Community streaks</span><h3>Streak-triggered animations.</h3><p>Live-platform streak events can dispatch scene animations and effects that acknowledge sustained community activity.</p></article>
+      <article class="tile violet third"><span class="tile-label">Scene command routing</span><h3>Mascot socket control.</h3><p>The mascot receives dedicated socket commands for animation, face, movement, entrances, reactions, and other audience-driven scene actions.</p></article>
+      <article class="tile yellow third"><span class="tile-label">Food gifts</span><h3>Audience-triggered food deliveries.</h3><p>Chat can send cookies, cake, pizza, drinks, and snacks into the scene through dedicated prop and presentation sequences.</p></article>
+      <article class="tile coral third"><span class="tile-label">Retaliation system</span><h3>Targeted attacks and counterattacks.</h3><p>Chat can attack Moon or the streamer. Attacks against Moon can select from several counterattack sequences with their own animations, effects, and timing.</p></article>
+      <article class="tile violet third"><span class="tile-label">Character abilities</span><h3>Secondary-character spell sequences.</h3><p>On-screen characters can execute their own spell and ability presentations with character-specific animation, effects, audio, and scene commands.</p></article>
+      <article class="tile blue third"><span class="tile-label">Legacy mascot support</span><h3>Older mascot scene behavior.</h3><p>The scene retains support for a previous chat mascot and its dedicated spell presentation, preserving older audience interactions.</p></article>
+      <article class="tile green third"><span class="tile-label">Stream introduction</span><h3>Intro video playback.</h3><p>A dedicated intro sequence starts the stream presentation, plays the configured video, and coordinates the scene transition into normal operation.</p></article>
+
+      <article class="tile green wide anchor"><span class="tile-label">Interactive experiences / staged execution</span><h3>Channel-point interaction lifecycle.</h3><p>Small audience actions can trigger a quick reaction. Larger ones prepare generated media, stage a sequence, update overlays, publish results, and restore normal operation.</p></article>
+      <article class="tile coral third"><span class="tile-label">Fast reactions</span><h3>Immediate audiovisual effects.</h3><p>Affection, chaos, outfits, sound cues, physical comedy, opinions, attention, and character reactions execute with minimal preparation.</p></article>
+      <article class="tile violet third"><span class="tile-label">Generated media</span><h3>Generation, analysis, and presentation.</h3><p>Prompts become images or media, the result is analyzed, Moon comments on it, and the scene presents the output.</p></article>
+
+      <article class="tile coral third"><span class="tile-label">Physical reactions</span><h3>Targeted character interactions.</h3><p>Audience actions can target Moon, another character, a guest, or a shared scene and produce different audio, expression, movement, and response behavior.</p></article>
+      <article class="tile blue third"><span class="tile-label">Forms and costumes</span><h3>Persistent outfit state.</h3><p>Form changes alter the visual state, affect context reminders, trigger presentation behavior, and can be reverted through a separate reset path.</p></article>
+      <article class="tile yellow third"><span class="tile-label">Conversation actions</span><h3>Prompted audience responses.</h3><p>Requests for attention, opinions, ratings, roasts, hot takes, answers, memories, and user-message highlights enter the conversational context.</p></article>
+      <article class="tile green third"><span class="tile-label">Sound actions</span><h3>Effects and audio cues.</h3><p>Short effects, stingers, impacts, environmental sounds, music changes, applause, and rejection cues can run alongside speech and movement.</p></article>
+      <article class="tile violet third"><span class="tile-label">Performance actions</span><h3>Dance, speed, and song control.</h3><p>Longer performances coordinate music, animation speed, camera state, speech, timing, and a protected return to the normal scene.</p></article>
+      <article class="tile dark wide anchor"><span class="tile-label">Full-song production</span><h3>Time-coded music and 3D scene performance.</h3><p>A full song can run as a protected production with separate music and vocal channels, a timed performance script, dynamic camera moves, character transforms, facial expressions, animations, dance actions, speed changes, scene commands, and post-song restoration.</p></article>
+      <article class="tile coral third"><span class="tile-label">Performance script</span><h3>Timestamped cue dispatch.</h3><p>Song cue files can schedule lyrics, expressions, animations, camera moves, character-specific actions, speed changes, model context updates, and arbitrary scene commands at precise offsets.</p></article>
+      <article class="tile blue third"><span class="tile-label">Camera console</span><h3>Dynamic camera and transform control.</h3><p>Performance cues can move the camera smoothly, change the character transform, use close or wide views, and restore the talk position when the song ends.</p></article>
+      <article class="tile violet third"><span class="tile-label">Vocal presentation</span><h3>Vocal channel and lip-sync coordination.</h3><p>Music and vocals are routed separately so the performance can drive the voice path, character mouth movement, and community or local audio outputs independently.</p></article>
+      <article class="tile yellow third"><span class="tile-label">Scene effects</span><h3>Animation, dance, and action cues.</h3><p>Timed cues can select animations, shuffle expressions, change animation speed, trigger character actions, activate props, and dispatch configured scene or lighting actions.</p></article>
+      <article class="tile green third"><span class="tile-label">Performance recovery</span><h3>Protected start and clean return.</h3><p>The system stops ambient pulses, freezes conflicting animation changes, saves the camera state, handles errors, resets expressions and animation, restores the camera, and releases the performance lock.</p></article>
+      <article class="tile half"><span class="tile-label">Media reports</span><h3>Review and broadcast formats.</h3><p>Generated or retrieved content can be presented as a review, report, advertisement, phone call, comic, stylized image, or informational segment.</p></article>
+      <article class="tile half"><span class="tile-label">Utility actions</span><h3>Daily and community state.</h3><p>Greetings, snacks, drinks, cookies, attention, user records, answer enforcement, and small status actions connect routine chat to persistent state.</p></article>
+
+      <article class="tile dark wide"><span class="tile-label">Interaction registry</span><h3>Modular interaction discovery.</h3><p>Interactive scripts are discovered, normalized into user-facing labels, loaded independently, and isolated so one failed module does not disable the complete set.</p></article>
+      <article class="tile lime third"><span class="tile-label">Execution model</span><h3>Preparation and execution phases.</h3><p>Expensive image, vision, model, and speech work can prepare in the background. The visible sequence begins later when the scheduler grants execution.</p></article>
+      <article class="tile coral third"><span class="tile-label">Execution model</span><h3>Immediate and queued paths.</h3><p>Short effects can run immediately. Longer interactions enter the priority queue and wait behind protected work.</p></article>
+      <article class="tile blue third"><span class="tile-label">Restart behavior</span><h3>Pending interaction recovery.</h3><p>Serializable labels, users, messages, and prepared data can be restored after a reconnect. Live functions and promises cannot.</p></article>
+      <article class="tile violet third"><span class="tile-label">Audience output</span><h3>Multi-surface result publishing.</h3><p>Interactions can update the avatar, local audio, community audio, chat, overlays, images, timers, leaderboards, and persistent history.</p></article>
+      <article class="tile yellow third"><span class="tile-label">Access and limits</span><h3>Validation, cooldowns, and quotas.</h3><p>Selected interactions enforce user access, cooldowns, image-generation limits, active-game rules, and current scene restrictions.</p></article>
+
+      <article class="tile yellow third"><span class="tile-label">Collection systems</span><h3>Randomized character and item draws.</h3><p>Character, hero, product, voice, image, and outcome selection is combined with quotas, staged presentation, reaction speech, and cleanup.</p></article>
+      <article class="tile blue third"><span class="tile-label">Audience games</span><h3>Timed quiz and leaderboard state.</h3><p>Questions, answer boards, guesses, semantic matching, scores, timers, leaderboards, celebration, and a closing response form one loop.</p></article>
+      <article class="tile half"><span class="tile-label">Media</span><h3>Timed media playback.</h3><p>Music, clips, effects, generated speech, applause, and transitions are coordinated with the visual scene.</p></article>
+      <article class="tile half"><span class="tile-label">Publishing</span><h3>Audience-facing result output.</h3><p>Images, outcomes, messages, timers, and announcements can be shown to the audience in several places.</p></article>
+      <article class="tile dark wide"><span class="tile-label">Staged content productions</span><h3>Review, report, advertisement, and call sequences.</h3><p>Content generation can be followed by visual inspection, scripted presentation, avatar reaction, speech, overlay updates, community publishing, and camera restoration.</p></article>
+      <article class="tile green third"><span class="tile-label">Presentation timing</span><h3>Minimum-duration and queue-aware staging.</h3><p>Generated content can remain visible for a required duration, shorten under queue pressure, or defer a reaction until the scene is available.</p></article>
+      <article class="tile violet third"><span class="tile-label">Interaction cleanup</span><h3>Temporary-file and scene restoration.</h3><p>Generated files, temporary images, audio, overlay states, camera changes, props, and presentation locks are cleared after an experience.</p></article>
+
+      <article class="tile dark wide"><span class="tile-label">Model evaluation / comparative testing</span><h3>Model and endpoint performance testing.</h3><p>A saved memory slice and a realistic prompt are sent through many providers, endpoints, model families, model sizes, routing layers, and deployment variants. The outputs are compared for latency and human quality.</p>
+        <div class="benchmark"><div class="bar"><span>quality</span><i></i></div><div class="bar"><span>speed</span><i></i></div><div class="bar"><span>style</span><i></i></div><div class="bar"><span>cost</span><i></i></div></div>
+      </article>
+      <article class="tile lime third"><span class="tile-label">Benchmark method</span><h3>Repeated comparative sampling.</h3><p>Each selected candidate is measured repeatedly, timed, captured, normalized, averaged, sorted, and printed for review.</p></article>
+      <article class="tile third"><span class="tile-label">Benchmark judgment</span><h3>Latency and output quality.</h3><p>Persona fidelity, naturalness, verbosity, refusal behavior, control compliance, reliability, and usefulness are compared with speed.</p></article>
+
+      <article class="tile blue third"><span class="tile-label">Recovery</span><h3>Reconnect and retry handling.</h3><p>Reconnects, retries, alternate services, recorder recovery, stale-file cleanup, and queue persistence keep the runtime available.</p></article>
+      <article class="tile coral third"><span class="tile-label">Guardrails</span><h3>Response validation and repair.</h3><p>Prompt leakage, empty output, repetition, excessive length, missing controls, unsafe terms, and malformed commands are detected and repaired.</p></article>
+      <article class="tile yellow third"><span class="tile-label">Operations</span><h3>Runtime observability.</h3><p>Load timing, call records, queue health, missing assets, summary statistics, repetition statistics, and history make behavior inspectable.</p></article>
+
+      <article class="tile dark wide anchor"><span class="tile-label">System boundary</span><h3>AI runtime plus 3D production environment.</h3><p>The system manages event timing, context selection, response validation, media preparation, multi-character scene control, cameras, lighting, tracking, physics, interruption, recovery, and persistence as one runtime.</p></article>
+      <article class="tile green third"><span class="tile-label">Screen characters</span><h3>Independent character runtimes.</h3><p>Named secondary characters load their own persona, scenario, behavior rules, voice, face data, movement data, context, and summarization state.</p></article>
+      <article class="tile violet third"><span class="tile-label">Operator surface</span><h3>Local control and inspection tools.</h3><p>Overlays, timers, subtitles, announcements, direct scene controls, hotkeys, and inspection tools support live operation.</p></article>
+      <article class="tile coral wide"><span class="tile-label">Phone characters</span><h3>Contextual phone-call conversations.</h3><p>A caller can reach a selected lore character through a staged phone sequence. The system manages caller identity, phone UI, ring and dial audio, character-specific dialogue, short-turn constraints, memory updates, live subtitles, and hang-up restoration.</p></article>
+      <article class="tile blue third"><span class="tile-label">Phone state</span><h3>Call lifecycle and interruption rules.</h3><p>Active calls reserve the required presentation state, prevent conflicting phone events, route both sides of the conversation into context, and restore the scene when the call ends.</p></article>
+      <article class="tile yellow third"><span class="tile-label">Chat mascot</span><h3>Dedicated mascot persona.</h3><p>A separate chat-facing mascot can speak with its own voice, expressions, movement, effects, and audience-triggered actions while Moonlash remains the primary host.</p></article>
+      <article class="tile dark wide"><span class="tile-label">Stream operations</span><h3>Timed advertising and break control.</h3><p>Ad breaks have countdown timing, start and end cues, music, overlay updates, queue interaction rules, and return-to-stream behavior.</p></article>
+      <article class="tile lime third"><span class="tile-label">Operator input</span><h3>Keyboard and hardware hotkeys.</h3><p>Local key events can trigger stream actions, media, camera changes, avatar controls, emergency stops, and other operator functions without using chat.</p></article>
+      <article class="tile violet third"><span class="tile-label">Local command transport</span><h3>Persistent socket command channel.</h3><p>External overlays and control surfaces can send and receive lightweight event messages for scene changes, timers, media, status, and operator actions.</p></article>
+      <article class="tile blue third"><span class="tile-label">Control API</span><h3>HTTP control endpoints.</h3><p>Local tools and hardware integrations can invoke runtime actions through a small request-based control layer, including avatar, stream, queue, and media operations.</p></article>
+      <article class="tile coral wide"><span class="tile-label">Live platform protocol</span><h3>In-house event and API client.</h3><p>The live-platform connection was implemented directly in the project. It handles authentication checks, persistent event sessions, subscription registration, reconnects, duplicate suppression, event normalization, chat, follows, raids, cheers, and channel-point events.</p></article>
+    </section>
+
+    <section class="footer">
+      <article class="tile yellow">
+        <span class="tile-label">Category key</span>
+        <h3>Subsystem categories.</h3>
+        <div class="legend-row">
+          <span class="legend"><i class="dot" style="background:var(--lime)"></i> intelligence</span>
+          <span class="legend"><i class="dot" style="background:var(--coral)"></i> live input</span>
+          <span class="legend"><i class="dot" style="background:var(--violet)"></i> presentation</span>
+          <span class="legend"><i class="dot" style="background:var(--blue)"></i> continuity</span>
+          <span class="legend"><i class="dot" style="background:var(--green)"></i> experiences</span>
+        </div>
+      </article>
+      <article class="tile dark">
+        <span class="tile-label">Integrated runtime</span>
+        <h3>Asynchronous subsystem coordination.</h3>
+        <p>Chat, voice, vision, games, timers, controls, model calls, media preparation, character state, and scene commands are scheduled through one runtime with explicit priority and interruption rules.</p>
+      </article>
+      <article class="tile lime">
+        <span class="tile-label">Conversational intelligence</span>
+        <h3>Persona, memory, retrieval, and response control.</h3>
+        <p>The conversational layer maintains long-running context, user memory, scenario state, model routing, validation, repair, summarization, and structured history.</p>
+      </article>
+      <article class="tile coral">
+        <span class="tile-label">Multimodal perception</span>
+        <h3>Voice, sound, image, animation, video, and game input.</h3>
+        <p>Several audio and visual pipelines convert live activity into normalized context, with turn detection, filtering, frame analysis, game-specific prompts, and low-latency paths.</p>
+      </article>
+      <article class="tile violet">
+        <span class="tile-label">3D production environment</span>
+        <h3>Map, characters, tracking, cameras, lights, and physics.</h3>
+        <p>The scene contains independently controlled characters, detailed face and hand tracking, body motion, transforms, clothing, props, particles, collisions, ragdolls, lighting, and reusable camera programs.</p>
+      </article>
+      <article class="tile blue">
+        <span class="tile-label">Character systems</span>
+        <h3>Host, streamer, screen characters, phone characters, and mascots.</h3>
+        <p>Each character type has separate context, voice, lip sync, animation, expression, tracking, memory, scene commands, and audience interaction behavior where required.</p>
+      </article>
+      <article class="tile green">
+        <span class="tile-label">Audience systems</span>
+        <h3>Immediate reactions, staged interactions, games, and persistence.</h3>
+        <p>Audience actions range from short physical or audio effects to generated-media productions, randomized collection systems, phone calls, timed games, performances, and cinematic attacks.</p>
+      </article>
+      <article class="tile yellow">
+        <span class="tile-label">Media production</span>
+        <h3>Speech, music, visual generation, overlays, and publishing.</h3>
+        <p>Generated speech, images, animations, videos, full songs, reports, reviews, subtitles, timers, and results are prepared, presented, routed, published, and cleaned up.</p>
+      </article>
+      <article class="tile dark">
+        <span class="tile-label">Operations and recovery</span>
+        <h3>Hotkeys, control APIs, sockets, analytics, and restart state.</h3>
+        <p>Operator controls, platform events, local endpoints, overlays, reconnects, provider failover, queue recovery, backups, telemetry, and watchdogs support continuous live operation.</p>
+      </article>
+    </section>
+  </main>
+</body>
+</html>
